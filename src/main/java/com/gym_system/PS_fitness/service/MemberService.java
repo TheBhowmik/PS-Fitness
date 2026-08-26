@@ -31,4 +31,9 @@ public class MemberService {
         member.setNextPaymentDate(member.getNextPaymentDate().plusMonths(1));
         return memberRepository.save(member);
     }
+
+    public Member getMemberByEmail(String email) {
+        return memberRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Member not found"));
+    }
 }

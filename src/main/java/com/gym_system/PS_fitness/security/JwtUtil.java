@@ -13,7 +13,10 @@ import java.util.function.Function;
 @Component
 public class JwtUtil {
 
-    private final Key key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
+    private final String SECRET_STRING = "MySuperSecretKeyForPsFitnessGymSystem2026!";
+
+    private final Key key = Keys.hmacShaKeyFor(SECRET_STRING.getBytes());
+
     private final long EXPIRATION_TIME = 86400000; // 24 hours
 
     public String generateToken(String email) {

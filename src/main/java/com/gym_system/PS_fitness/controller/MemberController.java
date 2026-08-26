@@ -5,6 +5,7 @@ import com.gym_system.PS_fitness.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import java.security.Principal;
 
 @RestController
 @RequestMapping("/api/members")
@@ -24,5 +25,12 @@ public class MemberController {
     public ResponseEntity<Member> renewMembership(@PathVariable Long id) {
         Member renewedMember = memberService.renewMembership(id);
         return ResponseEntity.ok(renewedMember);
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity<Member> getCurrentMember(Principal principal) {
+        // principal.getName() contains the email from the JWT
+        Member member = memberService.getMemberByEmail(principal.getName());
+        return ResponseEntity.ok(member);
     }
 }
