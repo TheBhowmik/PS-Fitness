@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/members")
-@CrossOrigin(origins = "*") // Allows your frontend to make requests
+@CrossOrigin(origins = "*")
 @RequiredArgsConstructor
 public class MemberController {
 
@@ -18,5 +18,11 @@ public class MemberController {
     public ResponseEntity<Member> register(@RequestBody Member member) {
         Member savedMember = memberService.registerMember(member);
         return ResponseEntity.ok(savedMember);
+    }
+
+    @PutMapping("/{id}/renew")
+    public ResponseEntity<Member> renewMembership(@PathVariable Long id) {
+        Member renewedMember = memberService.renewMembership(id);
+        return ResponseEntity.ok(renewedMember);
     }
 }

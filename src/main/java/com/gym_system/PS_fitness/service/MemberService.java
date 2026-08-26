@@ -14,12 +14,20 @@ public class MemberService {
     private final MemberRepository memberRepository;
 
     public Member registerMember(Member member) {
-        // Automatically set the joining date to today
         member.setJoiningDate(LocalDate.now());
-
-        // Use plusMonths(1) to keep the exact same day of the month
         member.setNextPaymentDate(LocalDate.now().plusMonths(1));
+        return memberRepository.save(member);
+    }
 
+    public Member renewMembership(Long memberId) {
+        // 1. Find the member by ID, or throw an error if they don't exist
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new RuntimeException("Member not found with ID: " + memberId));
+
+        // 2. Add exactly 1 month to their CURRENT due date
+        member.setNextPaymentDate(member.getNextPaymentDate().plusMonths(1));
+
+        // 3. Save the updated member back to PostgreSQL
         return memberRepository.save(member);
     }
 }
