@@ -35,8 +35,8 @@ public class AuthController {
             // passwordEncoder.matches(rawPassword, hashedPassword)
             if (passwordEncoder.matches(loginRequest.getPassword(), member.getPassword())) {
 
-                // 3. Passwords match! Generate the JWT token
-                String token = jwtUtil.generateToken(member.getEmail());
+                // Pass BOTH the email and the role into the token generator
+                String token = jwtUtil.generateToken(member.getEmail(), member.getRole());
                 return ResponseEntity.ok(token);
             }
         }

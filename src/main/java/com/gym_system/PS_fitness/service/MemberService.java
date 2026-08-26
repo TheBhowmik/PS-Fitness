@@ -19,8 +19,9 @@ public class MemberService {
         member.setJoiningDate(LocalDate.now());
         member.setNextPaymentDate(LocalDate.now().plusMonths(1));
 
-        member.setPassword(passwordEncoder.encode(member.getPassword()));
+        member.setRole("USER"); // Everyone starts as a standard user
 
+        member.setPassword(passwordEncoder.encode(member.getPassword()));
         return memberRepository.save(member);
     }
 
@@ -35,5 +36,9 @@ public class MemberService {
     public Member getMemberByEmail(String email) {
         return memberRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("Member not found"));
+    }
+
+    public java.util.List<Member> getAllMembers() {
+        return memberRepository.findAll();
     }
 }

@@ -26,7 +26,8 @@ public class SecurityConfig {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll() // Allow browser preflight checks
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                        .requestMatchers("/api/members/all").hasRole("ADMIN")// Allow browser preflight checks
                         // -----------------------------
                         .requestMatchers("/api/auth/login", "/api/members/register").permitAll()
                         .anyRequest().authenticated()

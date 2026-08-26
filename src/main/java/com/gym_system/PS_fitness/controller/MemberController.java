@@ -33,4 +33,9 @@ public class MemberController {
         Member member = memberService.getMemberByEmail(principal.getName());
         return ResponseEntity.ok(member);
     }
+
+    @GetMapping("/all")
+    public ResponseEntity<java.util.List<Member>> getAllMembers() {
+        return ResponseEntity.ok(memberService.getAllMembers());
+    }
 }

@@ -31,4 +31,6 @@ public class Member {
     private LocalDate joiningDate;
 
     private LocalDate nextPaymentDate;
+
+    private String role;
 }
