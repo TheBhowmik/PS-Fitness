@@ -13,7 +13,9 @@ const Login = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
+            // Routes to http://localhost:8081/api/auth/login
             const response = await api.post('/auth/login', credentials);
+
             const token = response.data.token || response.data;
             localStorage.setItem('token', token);
             navigate('/dashboard');
@@ -33,30 +35,19 @@ const Login = () => {
                     <div>
                         <label className="block text-sm font-medium text-gray-400 mb-1">Email Address</label>
                         <input
-                            type="email"
-                            name="email"
-                            onChange={handleChange}
-                            required
-                            autoComplete="new-email"
+                            type="email" name="email" onChange={handleChange} required autoComplete="new-email"
                             className="w-full bg-gray-950 border border-gray-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 transition-colors"
                         />
                     </div>
                     <div>
                         <label className="block text-sm font-medium text-gray-400 mb-1">Password</label>
                         <input
-                            type="password"
-                            name="password"
-                            onChange={handleChange}
-                            required
-                            autoComplete="new-password"
+                            type="password" name="password" onChange={handleChange} required autoComplete="new-password"
                             className="w-full bg-gray-950 border border-gray-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 transition-colors"
                         />
                     </div>
 
-                    <button
-                        type="submit"
-                        className="w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-3 px-4 rounded-xl transition-all duration-150 active:scale-[0.98] shadow-lg shadow-red-900/30 mt-4"
-                    >
+                    <button type="submit" className="w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-3 px-4 rounded-xl transition-all duration-150 active:scale-[0.98] shadow-lg shadow-red-900/30 mt-4">
                         Log In
                     </button>
                 </form>

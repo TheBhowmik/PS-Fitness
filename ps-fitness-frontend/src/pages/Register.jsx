@@ -11,12 +11,13 @@ const Register = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
+            // Routes to http://localhost:8081/api/auth/register
             await api.post('/auth/register', formData);
-            alert('Registration successful! Please login.');
+            alert('Registration successful! Please log in.');
             navigate('/login');
         } catch (error) {
             console.error("Registration failed", error);
-            alert('Registration failed.');
+            alert('Registration failed. Check your backend console for duplicate emails or errors.');
         }
     };
 
@@ -30,44 +31,28 @@ const Register = () => {
                     <div>
                         <label className="block text-sm font-medium text-gray-400 mb-1">Full Name</label>
                         <input
-                            type="text"
-                            name="name"
-                            onChange={handleChange}
-                            required
-                            autoComplete="off"
+                            type="text" name="name" onChange={handleChange} required autoComplete="off"
                             className="w-full bg-gray-950 border border-gray-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 transition-colors"
                         />
                     </div>
                     <div>
                         <label className="block text-sm font-medium text-gray-400 mb-1">Email Address</label>
                         <input
-                            type="email"
-                            name="email"
-                            onChange={handleChange}
-                            required
-                            autoComplete="new-email"
+                            type="email" name="email" onChange={handleChange} required autoComplete="new-email"
                             className="w-full bg-gray-950 border border-gray-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 transition-colors"
                         />
                     </div>
                     <div>
                         <label className="block text-sm font-medium text-gray-400 mb-1">Phone Number</label>
                         <input
-                            type="tel"
-                            name="phone"
-                            onChange={handleChange}
-                            required
-                            autoComplete="new-password"
+                            type="tel" name="phone" onChange={handleChange} required autoComplete="new-password"
                             className="w-full bg-gray-950 border border-gray-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 transition-colors"
                         />
                     </div>
                     <div>
                         <label className="block text-sm font-medium text-gray-400 mb-1">Password</label>
                         <input
-                            type="password"
-                            name="password"
-                            onChange={handleChange}
-                            required
-                            autoComplete="new-password"
+                            type="password" name="password" onChange={handleChange} required autoComplete="new-password"
                             className="w-full bg-gray-950 border border-gray-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 transition-colors"
                         />
                     </div>
