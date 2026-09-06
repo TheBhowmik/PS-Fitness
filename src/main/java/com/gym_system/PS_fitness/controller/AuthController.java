@@ -15,7 +15,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/auth")
-@CrossOrigin(origins = "*") // Allows your Vite frontend to connect
+@CrossOrigin(origins = "*")
 @RequiredArgsConstructor
 public class AuthController {
 
@@ -23,7 +23,6 @@ public class AuthController {
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
 
-    // --- NEW: Registration Endpoint ---
     @PostMapping("/register")
     public ResponseEntity<String> register(@RequestBody Member member) {
         // 1. Check if the email already exists to prevent duplicates
@@ -45,7 +44,6 @@ public class AuthController {
         return ResponseEntity.ok("Registration successful");
     }
 
-    // --- EXISTING: Login Endpoint ---
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody LoginRequest loginRequest) {
         Optional<Member> memberOpt = memberRepository.findByEmail(loginRequest.getEmail());

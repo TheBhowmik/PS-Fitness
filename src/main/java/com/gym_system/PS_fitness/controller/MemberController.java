@@ -15,12 +15,6 @@ public class MemberController {
 
     private final MemberService memberService;
 
-    @PostMapping("/register")
-    public ResponseEntity<Member> register(@RequestBody Member member) {
-        Member savedMember = memberService.registerMember(member);
-        return ResponseEntity.ok(savedMember);
-    }
-
     @PutMapping("/{id}/renew")
     public ResponseEntity<Member> renewMembership(@PathVariable Long id) {
         Member renewedMember = memberService.renewMembership(id);
