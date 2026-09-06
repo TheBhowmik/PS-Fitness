@@ -1,13 +1,9 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import api from '../services/api';
 
 const Login = () => {
-    const [credentials, setCredentials] = useState({
-        email: '',
-        password: ''
-    });
-
+    const [credentials, setCredentials] = useState({ email: '', password: '' });
     const navigate = useNavigate();
 
     const handleChange = (e) => {
@@ -17,52 +13,58 @@ const Login = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            // This hits http://localhost:8081/api/auth/login
             const response = await api.post('/auth/login', credentials);
-
-            // The backend returns the JWT string directly
-            const token = response.data;
-
-            // Save the VIP pass to the browser's local storage!
+            const token = response.data.token || response.data;
             localStorage.setItem('token', token);
-
-            alert('Login successful!');
-
-            // Redirect to the protected dashboard
             navigate('/dashboard');
         } catch (error) {
-            console.error('Login failed:', error);
-            alert('Invalid email or password. Please try again.');
+            console.error("Login failed", error);
+            alert('Invalid credentials. Please try again.');
         }
     };
 
     return (
-        <div style={{ maxWidth: '400px', margin: '50px auto', fontFamily: 'sans-serif' }}>
-            <h2>Member Login</h2>
-            <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
-                <input
-                    type="email"
-                    name="email"
-                    placeholder="Email Address"
-                    value={credentials.email}
-                    onChange={handleChange}
-                    required
-                />
-                <input
-                    type="password"
-                    name="password"
-                    placeholder="Password"
-                    value={credentials.password}
-                    onChange={handleChange}
-                    required
-                />
-                <button type="submit" style={{ padding: '10px', cursor: 'pointer' }}>
-                    Login
-                </button>
-            </form>
-            <p style={{ marginTop: '15px', textAlign: 'center' }}>
-                Don't have an account? <a href="/register">Register here</a>
-            </p>
+        <div className="min-h-screen bg-gray-950 flex items-center justify-center p-6 font-sans">
+            <div className="w-full max-w-md bg-gray-900 border border-gray-800 rounded-2xl shadow-2xl p-8">
+                <h2 className="text-3xl font-bold text-white mb-2">Welcome Back</h2>
+                <p className="text-gray-400 mb-8">Sign in to access your member pass.</p>
+
+                <form onSubmit={handleSubmit} className="space-y-4" autoComplete="off">
+                    <div>
+                        <label className="block text-sm font-medium text-gray-400 mb-1">Email Address</label>
+                        <input
+                            type="email"
+                            name="email"
+                            onChange={handleChange}
+                            required
+                            autoComplete="new-email"
+                            className="w-full bg-gray-950 border border-gray-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 transition-colors"
+                        />
+                    </div>
+                    <div>
+                        <label className="block text-sm font-medium text-gray-400 mb-1">Password</label>
+                        <input
+                            type="password"
+                            name="password"
+                            onChange={handleChange}
+                            required
+                            autoComplete="new-password"
+                            className="w-full bg-gray-950 border border-gray-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 transition-colors"
+                        />
+                    </div>
+
+                    <button
+                        type="submit"
+                        className="w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-3 px-4 rounded-xl transition-all duration-150 active:scale-[0.98] shadow-lg shadow-red-900/30 mt-4"
+                    >
+                        Log In
+                    </button>
+                </form>
+
+                <p className="mt-6 text-center text-sm text-gray-400">
+                    New to the gym? <Link to="/register" className="text-red-400 hover:text-red-300 font-medium">Create an account</Link>
+                </p>
+            </div>
         </div>
     );
 };

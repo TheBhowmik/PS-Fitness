@@ -3,103 +3,73 @@ import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
 
 const Dashboard = () => {
-    const [member, setMember] = useState(null);
+    const [profile, setProfile] = useState(null);
     const navigate = useNavigate();
 
     useEffect(() => {
         const fetchProfile = async () => {
             try {
-                const response = await api.get('/members/me');
-                setMember(response.data);
+                const response = await api.get('/profile');
+                setProfile(response.data);
             } catch (error) {
                 console.error("Failed to fetch profile", error);
-                navigate('/login');
+                if (error.response && error.response.status === 401) {
+                    navigate('/login');
+                }
             }
         };
-
         fetchProfile();
     }, [navigate]);
-
-    const handleRenew = async () => {
-        try {
-            const response = await api.put(`/members/${member.id}/renew`);
-            setMember(response.data);
-            alert('Membership renewed successfully!');
-        } catch (error) {
-            console.error("Failed to renew", error);
-            alert('Failed to renew membership.');
-        }
-    };
 
     const handleLogout = () => {
         localStorage.removeItem('token');
         navigate('/login');
     };
 
-    if (!member) {
-        return (
-            <div className="min-h-screen flex items-center justify-center bg-gray-950 text-gray-400">
-                <p className="text-xl animate-pulse">Loading member profile...</p>
-            </div>
-        );
-    }
-
     return (
-        <div className="min-h-screen bg-gray-950 text-gray-100 flex items-center justify-center p-6 font-sans">
-            <div className="w-full max-w-lg bg-gray-900 border border-gray-800 rounded-2xl shadow-2xl p-8 space-y-6">
+        <div className="min-h-screen bg-gray-950 text-gray-100 p-8 font-sans">
+            <div className="max-w-4xl mx-auto space-y-6">
 
-                {/* Header */}
-                <div className="flex justify-between items-center border-b border-gray-800 pb-5">
+                <div className="flex justify-between items-center bg-gray-900 p-6 rounded-2xl border border-gray-800 shadow-xl">
                     <div>
-                        <span className="text-xs uppercase tracking-widest text-red-500 font-semibold">Member Pass</span>
-                        <h2 className="text-2xl font-bold text-white mt-1">
-                            Welcome back, <span className="text-red-500">{member.name}</span>
-                        </h2>
+                        <h1 className="text-2xl font-bold text-white">Member Dashboard</h1>
+                        <p className="text-gray-400 text-sm mt-1">Welcome back to your fitness portal.</p>
                     </div>
-                    <span className="px-3 py-1 bg-gray-800 text-xs font-semibold text-gray-300 rounded-full border border-gray-700">
-            {member.role || 'USER'}
-          </span>
-                </div>
-
-                {/* Member Details */}
-                <div className="space-y-3 bg-gray-800/60 p-5 rounded-xl border border-gray-800">
-                    <div className="flex justify-between text-sm">
-                        <span className="text-gray-400">Email Address</span>
-                        <span className="font-medium text-white">{member.email}</span>
-                    </div>
-                    <div className="flex justify-between text-sm">
-                        <span className="text-gray-400">Phone Number</span>
-                        <span className="font-medium text-white">{member.phone}</span>
-                    </div>
-                    <div className="flex justify-between text-sm">
-                        <span className="text-gray-400">Enrolled Since</span>
-                        <span className="font-medium text-white">{member.joiningDate}</span>
-                    </div>
-                </div>
-
-                {/* Due Date Alert Card */}
-                <div className="bg-red-950/40 border border-red-900/60 p-4 rounded-xl flex items-center justify-between">
-                    <div>
-                        <p className="text-xs uppercase tracking-wider text-red-400 font-medium">Next Payment Due</p>
-                        <p className="text-xl font-extrabold text-red-300 mt-0.5">{member.nextPaymentDate}</p>
-                    </div>
-                    <span className="h-3 w-3 rounded-full bg-red-500 animate-ping"></span>
-                </div>
-
-                {/* Actions */}
-                <div className="flex gap-4 pt-2">
-                    <button
-                        onClick={handleRenew}
-                        className="flex-1 bg-red-600 hover:bg-red-700 text-white font-semibold py-3 px-4 rounded-xl transition-all duration-150 active:scale-[0.98] cursor-pointer shadow-lg shadow-red-900/30"
-                    >
-                        Renew Membership
-                    </button>
                     <button
                         onClick={handleLogout}
-                        className="bg-gray-800 hover:bg-gray-700 text-gray-300 font-semibold py-3 px-5 rounded-xl border border-gray-700 transition-all duration-150 active:scale-[0.98] cursor-pointer"
+                        className="bg-gray-800 hover:bg-gray-700 text-gray-300 font-semibold py-2 px-5 rounded-xl border border-gray-700 transition-all duration-150 active:scale-[0.98]"
                     >
                         Logout
                     </button>
+                </div>
+
+                <div className="bg-gray-900 rounded-2xl border border-gray-800 shadow-xl p-8">
+                    <h2 className="text-xl font-semibold text-white mb-6">Your Subscription details</h2>
+                    {profile ? (
+                        <div className="space-y-4">
+                            <div className="flex border-b border-gray-800 pb-4">
+                                <span className="w-1/3 text-gray-400 font-medium">Name</span>
+                                <span className="text-gray-200">{profile.name || "N/A"}</span>
+                            </div>
+                            <div className="flex border-b border-gray-800 pb-4">
+                                <span className="w-1/3 text-gray-400 font-medium">Email</span>
+                                <span className="text-gray-200">{profile.email || "N/A"}</span>
+                            </div>
+                            <div className="flex pb-2">
+                                <span className="w-1/3 text-gray-400 font-medium">Membership Status</span>
+                                <span className="px-3 py-1 bg-green-950/40 text-green-400 border border-green-900/60 rounded-full text-sm font-medium">
+                  Active
+                </span>
+                            </div>
+                        </div>
+                    ) : (
+                        <div className="animate-pulse flex space-x-4">
+                            <div className="flex-1 space-y-4 py-1">
+                                <div className="h-4 bg-gray-800 rounded w-3/4"></div>
+                                <div className="h-4 bg-gray-800 rounded w-1/2"></div>
+                            </div>
+                        </div>
+                    )}
                 </div>
 
             </div>
