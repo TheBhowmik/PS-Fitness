@@ -6,7 +6,6 @@ const Dashboard = () => {
     const [member, setMember] = useState(null);
     const navigate = useNavigate();
 
-    // This runs automatically when the page loads
     useEffect(() => {
         const fetchProfile = async () => {
             try {
@@ -14,7 +13,6 @@ const Dashboard = () => {
                 setMember(response.data);
             } catch (error) {
                 console.error("Failed to fetch profile", error);
-                // If the token is expired or missing, kick them back to login
                 navigate('/login');
             }
         };
@@ -24,12 +22,9 @@ const Dashboard = () => {
 
     const handleRenew = async () => {
         try {
-            // Call the PUT endpoint using the member's ID
             const response = await api.put(`/members/${member.id}/renew`);
-
-            // Update the local state with the new data from the backend
             setMember(response.data);
-            alert('Membership renewed successfully! Your next payment date has been updated.');
+            alert('Membership renewed successfully!');
         } catch (error) {
             console.error("Failed to renew", error);
             alert('Failed to renew membership.');
@@ -37,42 +32,76 @@ const Dashboard = () => {
     };
 
     const handleLogout = () => {
-        localStorage.removeItem('token'); // Shred the VIP pass
-        navigate('/login'); // Send them to the login screen
+        localStorage.removeItem('token');
+        navigate('/login');
     };
 
-    // Show a loading state until the data arrives
-    if (!member) return <h2 style={{ textAlign: 'center', marginTop: '50px' }}>Loading...</h2>;
+    if (!member) {
+        return (
+            <div className="min-h-screen flex items-center justify-center bg-gray-950 text-gray-400">
+                <p className="text-xl animate-pulse">Loading member profile...</p>
+            </div>
+        );
+    }
 
     return (
-        <div style={{ maxWidth: '500px', margin: '50px auto', fontFamily: 'sans-serif', padding: '20px', border: '1px solid #ccc', borderRadius: '8px' }}>
-            <h2>Welcome back, {member.name}!</h2>
+        <div className="min-h-screen bg-gray-950 text-gray-100 flex items-center justify-center p-6 font-sans">
+            <div className="w-full max-w-lg bg-gray-900 border border-gray-800 rounded-2xl shadow-2xl p-8 space-y-6">
 
-            <div style={{ margin: '20px 0', padding: '15px', backgroundColor: '#f0f8ff', borderRadius: '5px' }}>
-                <p><strong>Email:</strong> {member.email}</p>
-                <p><strong>Phone:</strong> {member.phone}</p>
-                <p><strong>Joining Date:</strong> {member.joiningDate}</p>
+                {/* Header */}
+                <div className="flex justify-between items-center border-b border-gray-800 pb-5">
+                    <div>
+                        <span className="text-xs uppercase tracking-widest text-red-500 font-semibold">Member Pass</span>
+                        <h2 className="text-2xl font-bold text-white mt-1">
+                            Welcome back, <span className="text-red-500">{member.name}</span>
+                        </h2>
+                    </div>
+                    <span className="px-3 py-1 bg-gray-800 text-xs font-semibold text-gray-300 rounded-full border border-gray-700">
+            {member.role || 'USER'}
+          </span>
+                </div>
 
-                <hr style={{ margin: '15px 0' }} />
+                {/* Member Details */}
+                <div className="space-y-3 bg-gray-800/60 p-5 rounded-xl border border-gray-800">
+                    <div className="flex justify-between text-sm">
+                        <span className="text-gray-400">Email Address</span>
+                        <span className="font-medium text-white">{member.email}</span>
+                    </div>
+                    <div className="flex justify-between text-sm">
+                        <span className="text-gray-400">Phone Number</span>
+                        <span className="font-medium text-white">{member.phone}</span>
+                    </div>
+                    <div className="flex justify-between text-sm">
+                        <span className="text-gray-400">Enrolled Since</span>
+                        <span className="font-medium text-white">{member.joiningDate}</span>
+                    </div>
+                </div>
 
-                <h3 style={{ color: '#d9534f' }}>
-                    Next Payment Due: {member.nextPaymentDate}
-                </h3>
-            </div>
+                {/* Due Date Alert Card */}
+                <div className="bg-red-950/40 border border-red-900/60 p-4 rounded-xl flex items-center justify-between">
+                    <div>
+                        <p className="text-xs uppercase tracking-wider text-red-400 font-medium">Next Payment Due</p>
+                        <p className="text-xl font-extrabold text-red-300 mt-0.5">{member.nextPaymentDate}</p>
+                    </div>
+                    <span className="h-3 w-3 rounded-full bg-red-500 animate-ping"></span>
+                </div>
 
-            <div style={{ display: 'flex', gap: '10px' }}>
-                <button
-                    onClick={handleRenew}
-                    style={{ flex: 1, padding: '10px', backgroundColor: '#5cb85c', color: 'white', border: 'none', cursor: 'pointer', borderRadius: '4px' }}
-                >
-                    Renew Membership
-                </button>
-                <button
-                    onClick={handleLogout}
-                    style={{ padding: '10px', backgroundColor: '#333', color: 'white', border: 'none', cursor: 'pointer', borderRadius: '4px' }}
-                >
-                    Logout
-                </button>
+                {/* Actions */}
+                <div className="flex gap-4 pt-2">
+                    <button
+                        onClick={handleRenew}
+                        className="flex-1 bg-red-600 hover:bg-red-700 text-white font-semibold py-3 px-4 rounded-xl transition-all duration-150 active:scale-[0.98] cursor-pointer shadow-lg shadow-red-900/30"
+                    >
+                        Renew Membership
+                    </button>
+                    <button
+                        onClick={handleLogout}
+                        className="bg-gray-800 hover:bg-gray-700 text-gray-300 font-semibold py-3 px-5 rounded-xl border border-gray-700 transition-all duration-150 active:scale-[0.98] cursor-pointer"
+                    >
+                        Logout
+                    </button>
+                </div>
+
             </div>
         </div>
     );
