@@ -3,58 +3,91 @@ import { useNavigate, Link } from 'react-router-dom';
 import api from '../services/api';
 
 const Login = () => {
-    const [credentials, setCredentials] = useState({ email: '', password: '' });
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [error, setError] = useState('');
     const navigate = useNavigate();
 
-    const handleChange = (e) => {
-        setCredentials({ ...credentials, [e.target.name]: e.target.value });
-    };
-
-    const handleSubmit = async (e) => {
+    const handleLogin = async (e) => {
         e.preventDefault();
         try {
-            // Routes to http://localhost:8081/api/auth/login
-            const response = await api.post('/auth/login', credentials);
-
-            const token = response.data.token || response.data;
+            // 1. Get the token
+            const response = await api.post('/auth/login', { email, password });
+            const token = response.data;
             localStorage.setItem('token', token);
-            navigate('/dashboard');
-        } catch (error) {
-            console.error("Login failed", error);
-            alert('Invalid credentials. Please try again.');
+
+            // 2. Fetch the user's profile to check their role
+            const profileRes = await api.get('/members/me', {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+
+            // 3. Route based on the role
+            if (profileRes.data.role === 'ADMIN') {
+                navigate('/admin'); // Make sure this matches your App.jsx route
+            } else {
+                navigate('/dashboard');
+            }
+
+        } catch (err) {
+            setError('Invalid credentials. Please try again.');
         }
     };
 
     return (
-        <div className="min-h-screen bg-gray-950 flex items-center justify-center p-6 font-sans">
-            <div className="w-full max-w-md bg-gray-900 border border-gray-800 rounded-2xl shadow-2xl p-8">
-                <h2 className="text-3xl font-bold text-white mb-2">Welcome Back</h2>
-                <p className="text-gray-400 mb-8">Sign in to access your member pass.</p>
+        <div className="min-h-screen bg-[#F4F1EA] text-stone-800 flex items-center justify-center p-6 font-['Lato',sans-serif]">
+            <div className="w-full max-w-md bg-white border border-stone-200 rounded-sm shadow-xl p-10 space-y-8">
 
-                <form onSubmit={handleSubmit} className="space-y-4" autoComplete="off">
-                    <div>
-                        <label className="block text-sm font-medium text-gray-400 mb-1">Email Address</label>
+                <div className="text-center space-y-2 border-b border-stone-200 pb-6">
+                    <span className="text-xs uppercase tracking-[0.2em] text-stone-400 font-bold">PS Fitness</span>
+                    <h2 className="text-3xl font-bold text-stone-900 font-['Playfair_Display',serif] italic">
+                        Member Portal
+                    </h2>
+                </div>
+
+                {error && (
+                    <div className="bg-[#FAF6EE] border border-[#E8DCC4] text-amber-900 text-sm p-3 rounded-sm text-center">
+                        {error}
+                    </div>
+                )}
+
+                <form onSubmit={handleLogin} className="space-y-5">
+                    <div className="space-y-1.5">
+                        <label className="text-xs tracking-wider text-stone-500 uppercase font-bold">Email Address</label>
                         <input
-                            type="email" name="email" onChange={handleChange} required autoComplete="new-email"
-                            className="w-full bg-gray-950 border border-gray-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 transition-colors"
+                            type="email"
+                            required
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            className="w-full bg-[#FAFAF8] border border-stone-200 rounded-sm px-4 py-2.5 text-stone-800 text-sm focus:outline-none focus:border-amber-700 focus:bg-white transition-colors"
                         />
                     </div>
-                    <div>
-                        <label className="block text-sm font-medium text-gray-400 mb-1">Password</label>
+                    <div className="space-y-1.5">
+                        <label className="text-xs tracking-wider text-stone-500 uppercase font-bold">Password</label>
                         <input
-                            type="password" name="password" onChange={handleChange} required autoComplete="new-password"
-                            className="w-full bg-gray-950 border border-gray-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 transition-colors"
+                            type="password"
+                            required
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            className="w-full bg-[#FAFAF8] border border-stone-200 rounded-sm px-4 py-2.5 text-stone-800 text-sm focus:outline-none focus:border-amber-700 focus:bg-white transition-colors"
                         />
                     </div>
 
-                    <button type="submit" className="w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-3 px-4 rounded-xl transition-all duration-150 active:scale-[0.98] shadow-lg shadow-red-900/30 mt-4">
-                        Log In
+                    <button
+                        type="submit"
+                        className="w-full bg-stone-900 hover:bg-black text-white tracking-widest uppercase text-xs font-bold py-3.5 rounded-sm transition-all duration-150 active:scale-[0.99] cursor-pointer mt-4"
+                    >
+                        Sign In
                     </button>
                 </form>
 
-                <p className="mt-6 text-center text-sm text-gray-400">
-                    New to the gym? <Link to="/register" className="text-red-400 hover:text-red-300 font-medium">Create an account</Link>
-                </p>
+                <div className="text-center pt-4">
+                    <p className="text-sm text-stone-500">
+                        Not a member yet?{' '}
+                        <Link to="/register" className="text-amber-700 font-bold hover:text-amber-800 underline decoration-amber-700/30 underline-offset-4">
+                            Apply here
+                        </Link>
+                    </p>
+                </div>
             </div>
         </div>
     );

@@ -25,11 +25,19 @@ public class MemberService {
         return memberRepository.save(member);
     }
 
-    public Member renewMembership(Long memberId) {
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new RuntimeException("Member not found with ID: " + memberId));
+    public Member renewMembership(Long id) {
+        Member member = memberRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Member not found"));
 
-        member.setNextPaymentDate(member.getNextPaymentDate().plusMonths(1));
+        LocalDate today = LocalDate.now();
+
+        // Smart Due Date Calculation for online renewals
+        if (member.getNextPaymentDate() != null && member.getNextPaymentDate().isAfter(today)) {
+            member.setNextPaymentDate(member.getNextPaymentDate().plusMonths(1));
+        } else {
+            member.setNextPaymentDate(today.plusMonths(1));
+        }
+
         return memberRepository.save(member);
     }
 

@@ -143,79 +143,78 @@ const Dashboard = () => {
     }
 
     return (
-        <div className="min-h-screen bg-gray-950 text-gray-100 flex items-center justify-center p-6 font-sans">
-            <div className="w-full max-w-lg bg-gray-900 border border-gray-800 rounded-2xl shadow-2xl p-8 space-y-6">
+        <div className="min-h-screen bg-[#F4F1EA] text-stone-800 flex items-center justify-center p-6 font-['Lato',sans-serif]">
+            <div className="w-full max-w-lg bg-white border border-stone-200 rounded-sm shadow-xl p-10 space-y-8">
 
                 {/* Header */}
-                <div className="flex justify-between items-center border-b border-gray-800 pb-5">
+                <div className="flex justify-between items-start border-b border-stone-200 pb-6">
                     <div>
-                        <span className="text-xs uppercase tracking-widest text-red-500 font-semibold">Member Pass</span>
-                        <h2 className="text-2xl font-bold text-white mt-1">
-                            Welcome back, <span className="text-red-500">{member.name}</span>
+                        <span className="text-xs uppercase tracking-[0.2em] text-stone-400 font-bold">Membership Pass</span>
+                        <h2 className="text-3xl font-bold text-stone-900 mt-2 font-['Playfair_Display',serif] italic">
+                            Welcome, <span className="text-amber-700">{member.name}</span>
                         </h2>
                     </div>
-                    <span className="px-3 py-1 bg-gray-800 text-xs font-semibold text-gray-300 rounded-full border border-gray-700">
+                    <span className="px-3 py-1 bg-[#F4F1EA] text-xs font-bold tracking-widest text-stone-600 border border-stone-200 rounded-sm">
                         {member.role || 'USER'}
                     </span>
                 </div>
 
                 {/* Member Details */}
-                <div className="space-y-3 bg-gray-800/60 p-5 rounded-xl border border-gray-800">
+                <div className="space-y-4 bg-[#FAFAF8] p-6 rounded-sm border border-stone-100">
                     <div className="flex justify-between text-sm">
-                        <span className="text-gray-400">Email Address</span>
-                        <span className="font-medium text-white">{member.email}</span>
+                        <span className="text-stone-500 tracking-wide">Email Address</span>
+                        <span className="font-medium text-stone-800">{member.email}</span>
                     </div>
                     <div className="flex justify-between text-sm">
-                        <span className="text-gray-400">Phone Number</span>
-                        <span className="font-medium text-white">{member.phone}</span>
+                        <span className="text-stone-500 tracking-wide">Phone Number</span>
+                        <span className="font-medium text-stone-800">{member.phone}</span>
                     </div>
                     <div className="flex justify-between text-sm">
-                        <span className="text-gray-400">Enrolled Since</span>
-                        <span className="font-medium text-white">{member.joiningDate}</span>
+                        <span className="text-stone-500 tracking-wide">Enrolled Since</span>
+                        <span className="font-medium text-stone-800">{member.joiningDate}</span>
                     </div>
                 </div>
 
-                {/* Due Date Alert Card with Edit Option */}
-                <div className="bg-red-950/40 border border-red-900/60 p-4 rounded-xl space-y-3">
+                {/* Due Date Alert Card */}
+                <div className="bg-[#FAF6EE] border border-[#E8DCC4] p-5 rounded-sm space-y-3">
                     <div className="flex items-center justify-between">
                         <div>
-                            <p className="text-xs uppercase tracking-wider text-red-400 font-medium">Next Payment Due</p>
+                            <p className="text-xs uppercase tracking-[0.15em] text-amber-800/70 font-bold">Next Payment Due</p>
                             {!isEditingDate ? (
-                                <p className="text-xl font-extrabold text-red-300 mt-0.5">{member.nextPaymentDate}</p>
+                                <p className="text-2xl font-bold text-amber-900 mt-1 font-['Playfair_Display',serif]">{member.nextPaymentDate}</p>
                             ) : null}
                         </div>
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-3">
                             {!isEditingDate ? (
                                 <button
                                     onClick={() => setIsEditingDate(true)}
-                                    className="text-xs bg-gray-800 hover:bg-gray-700 text-gray-300 border border-gray-700 px-3 py-1.5 rounded-lg transition-colors cursor-pointer"
+                                    className="text-xs tracking-wider bg-white hover:bg-stone-50 text-stone-600 border border-stone-200 px-3 py-1.5 rounded-sm transition-colors cursor-pointer"
                                 >
-                                    Edit Date
+                                    Edit
                                 </button>
                             ) : null}
-                            <span className="h-3 w-3 rounded-full bg-red-500 animate-ping"></span>
                         </div>
                     </div>
 
                     {isEditingDate && (
-                        <form onSubmit={handleDateUpdate} className="pt-2 border-t border-red-900/40 flex gap-2">
+                        <form onSubmit={handleDateUpdate} className="pt-3 border-t border-[#E8DCC4] flex gap-2">
                             <input
                                 type="date"
                                 value={newDate}
                                 onChange={(e) => setNewDate(e.target.value)}
-                                className="bg-gray-950 border border-gray-800 rounded-lg px-3 py-1.5 text-white text-sm focus:outline-none focus:border-red-500 flex-1"
+                                className="bg-white border border-stone-300 rounded-sm px-3 py-1.5 text-stone-800 text-sm focus:outline-none focus:border-amber-700 flex-1"
                                 required
                             />
                             <button
                                 type="submit"
-                                className="bg-red-600 hover:bg-red-700 text-white text-xs font-semibold px-4 py-1.5 rounded-lg transition-colors cursor-pointer"
+                                className="bg-stone-800 hover:bg-stone-900 text-white tracking-wide text-xs px-4 py-1.5 rounded-sm transition-colors cursor-pointer"
                             >
                                 Save
                             </button>
                             <button
                                 type="button"
                                 onClick={() => setIsEditingDate(false)}
-                                className="bg-gray-800 hover:bg-gray-700 text-gray-300 text-xs px-3 py-1.5 rounded-lg transition-colors cursor-pointer"
+                                className="bg-stone-200 hover:bg-stone-300 text-stone-700 tracking-wide text-xs px-3 py-1.5 rounded-sm transition-colors cursor-pointer"
                             >
                                 Cancel
                             </button>
@@ -224,22 +223,22 @@ const Dashboard = () => {
                 </div>
 
                 {/* Actions */}
-                <div className="flex gap-4 pt-2">
+                <div className="flex gap-3 pt-4 flex-wrap">
                     <button
                         onClick={handleRenew}
-                        className="flex-1 bg-red-600 hover:bg-red-700 text-white font-semibold py-3 px-4 rounded-xl transition-all duration-150 active:scale-[0.98] cursor-pointer shadow-lg shadow-red-900/30"
+                        className="flex-1 bg-stone-900 hover:bg-black text-white tracking-widest uppercase text-xs font-bold py-3.5 px-4 rounded-sm transition-all duration-150 active:scale-[0.99] cursor-pointer min-w-[180px]"
                     >
                         Renew Membership
                     </button>
                     <button
                         onClick={handleDownloadReceipt}
-                        className="bg-gray-800 hover:bg-gray-700 text-gray-300 font-semibold py-3 px-5 rounded-xl border border-gray-700 transition-all duration-150 active:scale-[0.98] cursor-pointer"
+                        className="bg-white hover:bg-stone-50 text-stone-800 tracking-widest uppercase text-xs font-bold py-3.5 px-5 rounded-sm border border-stone-300 transition-all duration-150 active:scale-[0.99] cursor-pointer"
                     >
-                        Download Receipt
+                        Receipt
                     </button>
                     <button
                         onClick={handleLogout}
-                        className="bg-gray-800 hover:bg-gray-700 text-gray-300 font-semibold py-3 px-5 rounded-xl border border-gray-700 transition-all duration-150 active:scale-[0.98] cursor-pointer"
+                        className="bg-stone-100 hover:bg-stone-200 text-stone-600 tracking-widest uppercase text-xs font-bold py-3.5 px-5 rounded-sm border border-stone-200 transition-all duration-150 active:scale-[0.99] cursor-pointer"
                     >
                         Logout
                     </button>

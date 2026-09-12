@@ -3,68 +3,109 @@ import { useNavigate, Link } from 'react-router-dom';
 import api from '../services/api';
 
 const Register = () => {
-    const [formData, setFormData] = useState({ name: '', email: '', phone: '', password: '' });
+    const [formData, setFormData] = useState({
+        name: '',
+        email: '',
+        phone: '',
+        password: ''
+    });
+    const [error, setError] = useState('');
     const navigate = useNavigate();
 
-    const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
+    const handleChange = (e) => {
+        setFormData({ ...formData, [e.target.name]: e.target.value });
+    };
 
-    const handleSubmit = async (e) => {
+    const handleRegister = async (e) => {
         e.preventDefault();
         try {
-            // Routes to http://localhost:8081/api/auth/register
             await api.post('/auth/register', formData);
             alert('Registration successful! Please log in.');
             navigate('/login');
-        } catch (error) {
-            console.error("Registration failed", error);
-            alert('Registration failed. Check your backend console for duplicate emails or errors.');
+        } catch (err) {
+            setError(err.response?.data || 'Registration failed. Email or Phone might already exist.');
         }
     };
 
     return (
-        <div className="min-h-screen bg-gray-950 flex items-center justify-center p-6 font-sans">
-            <div className="w-full max-w-md bg-gray-900 border border-gray-800 rounded-2xl shadow-2xl p-8">
-                <h2 className="text-3xl font-bold text-white mb-2">Create Account</h2>
-                <p className="text-gray-400 mb-8">Join the fitness program today.</p>
+        <div className="min-h-screen bg-[#F4F1EA] text-stone-800 flex items-center justify-center p-6 font-['Lato',sans-serif]">
+            <div className="w-full max-w-md bg-white border border-stone-200 rounded-sm shadow-xl p-10 space-y-8">
 
-                <form onSubmit={handleSubmit} className="space-y-4" autoComplete="off">
-                    <div>
-                        <label className="block text-sm font-medium text-gray-400 mb-1">Full Name</label>
+                <div className="text-center space-y-2 border-b border-stone-200 pb-6">
+                    <span className="text-xs uppercase tracking-[0.2em] text-stone-400 font-bold">PS Fitness</span>
+                    <h2 className="text-3xl font-bold text-stone-900 font-['Playfair_Display',serif] italic">
+                        Membership Application
+                    </h2>
+                </div>
+
+                {error && (
+                    <div className="bg-[#FAF6EE] border border-[#E8DCC4] text-amber-900 text-sm p-3 rounded-sm text-center">
+                        {error}
+                    </div>
+                )}
+
+                <form onSubmit={handleRegister} className="space-y-4">
+                    <div className="space-y-1.5">
+                        <label className="text-xs tracking-wider text-stone-500 uppercase font-bold">Full Name</label>
                         <input
-                            type="text" name="name" onChange={handleChange} required autoComplete="off"
-                            className="w-full bg-gray-950 border border-gray-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 transition-colors"
+                            type="text"
+                            name="name"
+                            required
+                            value={formData.name}
+                            onChange={handleChange}
+                            className="w-full bg-[#FAFAF8] border border-stone-200 rounded-sm px-4 py-2.5 text-stone-800 text-sm focus:outline-none focus:border-amber-700 focus:bg-white transition-colors"
                         />
                     </div>
-                    <div>
-                        <label className="block text-sm font-medium text-gray-400 mb-1">Email Address</label>
+                    <div className="space-y-1.5">
+                        <label className="text-xs tracking-wider text-stone-500 uppercase font-bold">Email Address</label>
                         <input
-                            type="email" name="email" onChange={handleChange} required autoComplete="new-email"
-                            className="w-full bg-gray-950 border border-gray-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 transition-colors"
+                            type="email"
+                            name="email"
+                            required
+                            value={formData.email}
+                            onChange={handleChange}
+                            className="w-full bg-[#FAFAF8] border border-stone-200 rounded-sm px-4 py-2.5 text-stone-800 text-sm focus:outline-none focus:border-amber-700 focus:bg-white transition-colors"
                         />
                     </div>
-                    <div>
-                        <label className="block text-sm font-medium text-gray-400 mb-1">Phone Number</label>
+                    <div className="space-y-1.5">
+                        <label className="text-xs tracking-wider text-stone-500 uppercase font-bold">Phone Number</label>
                         <input
-                            type="tel" name="phone" onChange={handleChange} required autoComplete="new-password"
-                            className="w-full bg-gray-950 border border-gray-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 transition-colors"
+                            type="tel"
+                            name="phone"
+                            required
+                            value={formData.phone}
+                            onChange={handleChange}
+                            className="w-full bg-[#FAFAF8] border border-stone-200 rounded-sm px-4 py-2.5 text-stone-800 text-sm focus:outline-none focus:border-amber-700 focus:bg-white transition-colors"
                         />
                     </div>
-                    <div>
-                        <label className="block text-sm font-medium text-gray-400 mb-1">Password</label>
+                    <div className="space-y-1.5">
+                        <label className="text-xs tracking-wider text-stone-500 uppercase font-bold">Password</label>
                         <input
-                            type="password" name="password" onChange={handleChange} required autoComplete="new-password"
-                            className="w-full bg-gray-950 border border-gray-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 transition-colors"
+                            type="password"
+                            name="password"
+                            required
+                            value={formData.password}
+                            onChange={handleChange}
+                            className="w-full bg-[#FAFAF8] border border-stone-200 rounded-sm px-4 py-2.5 text-stone-800 text-sm focus:outline-none focus:border-amber-700 focus:bg-white transition-colors"
                         />
                     </div>
 
-                    <button type="submit" className="w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-3 px-4 rounded-xl transition-all duration-150 active:scale-[0.98] shadow-lg shadow-red-900/30 mt-4">
-                        Register
+                    <button
+                        type="submit"
+                        className="w-full bg-stone-900 hover:bg-black text-white tracking-widest uppercase text-xs font-bold py-3.5 rounded-sm transition-all duration-150 active:scale-[0.99] cursor-pointer mt-4"
+                    >
+                        Submit Application
                     </button>
                 </form>
 
-                <p className="mt-6 text-center text-sm text-gray-400">
-                    Already a member? <Link to="/login" className="text-red-400 hover:text-red-300 font-medium">Log in</Link>
-                </p>
+                <div className="text-center pt-2">
+                    <p className="text-sm text-stone-500">
+                        Already a member?{' '}
+                        <Link to="/login" className="text-amber-700 font-bold hover:text-amber-800 underline decoration-amber-700/30 underline-offset-4">
+                            Sign in
+                        </Link>
+                    </p>
+                </div>
             </div>
         </div>
     );
