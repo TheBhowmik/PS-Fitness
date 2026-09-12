@@ -13,6 +13,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import com.gym_system.PS_fitness.service.PdfService;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+
 @RestController
 @RequestMapping("/api/members")
 @CrossOrigin(origins = "*")
@@ -21,6 +25,7 @@ public class MemberController {
 
     private final MemberService memberService;
     private final MemberRepository memberRepository;
+    private final PdfService pdfService;
 
     @PutMapping("/{id}/renew")
     public ResponseEntity<Member> renewMembership(@PathVariable Long id) {
@@ -47,6 +52,26 @@ public class MemberController {
             member.setNextPaymentDate(LocalDate.parse(request.get("nextPaymentDate")));
             memberRepository.save(member);
             return ResponseEntity.ok(member);
+        }
+        return ResponseEntity.notFound().build();
+    }
+
+    @GetMapping("/{id}/receipt")
+    public ResponseEntity<byte[]> downloadReceipt(@PathVariable Long id) {
+        Optional<Member> memberOpt = memberRepository.findById(id);
+
+        if (memberOpt.isPresent()) {
+            Member member = memberOpt.get();
+            byte[] pdfBytes = pdfService.generateReceipt(member);
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_PDF);
+            // "attachment" forces the browser to download the file instead of opening it
+            headers.setContentDispositionFormData("attachment", "PS_Fitness_Receipt_" + member.getName() + ".pdf");
+
+            return ResponseEntity.ok()
+                    .headers(headers)
+                    .body(pdfBytes);
         }
         return ResponseEntity.notFound().build();
     }

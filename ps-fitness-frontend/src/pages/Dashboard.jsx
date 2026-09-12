@@ -38,15 +38,51 @@ const Dashboard = () => {
         if (!member) return;
         try {
             const token = localStorage.getItem('token');
-            const response = await api.put(`/members/${member.id}/renew`, {}, {
+
+            // 1. Fetch Order ID from Spring Boot
+            const orderRes = await api.post('/payment/create-order', {}, {
                 headers: { Authorization: `Bearer ${token}` }
             });
-            setMember(response.data);
-            setNewDate(response.data.nextPaymentDate);
-            alert('Membership renewed successfully!');
+
+            const orderData = typeof orderRes.data === 'string' ? JSON.parse(orderRes.data) : orderRes.data;
+
+            // 2. Load Razorpay Script
+            const script = document.createElement('script');
+            script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+            script.async = true;
+            document.body.appendChild(script);
+
+            script.onload = () => {
+                const options = {
+                    key: "rzp_test_Tb5xrrggVjh5Tb",
+                    amount: orderData.amount,
+                    currency: orderData.currency,
+                    name: "PS Fitness",
+                    description: "Monthly Membership Renewal",
+                    order_id: orderData.id,
+                    handler: async function (response) {
+                        // 3. On successful payment, trigger backend renewal
+                        await api.put(`/members/${member.id}/renew`, {}, {
+                            headers: { Authorization: `Bearer ${token}` }
+                        });
+
+                        alert(`Payment successful! Payment ID: ${response.razorpay_payment_id}`);
+                        window.location.reload();
+                    },
+                    prefill: {
+                        name: member.name,
+                        email: member.email,
+                        contact: member.phone
+                    },
+                    theme: { color: "#ef4444" }
+                };
+
+                const rzp = new window.Razorpay(options);
+                rzp.open();
+            };
         } catch (error) {
-            console.error("Failed to renew", error);
-            alert('Failed to renew membership.');
+            console.error("Payment initialization failed", error);
+            alert('Could not start payment gateway.');
         }
     };
 
@@ -66,6 +102,30 @@ const Dashboard = () => {
         } catch (error) {
             console.error("Failed to update date", error);
             alert('Failed to update payment date. Check permissions.');
+        }
+    };
+
+    const handleDownloadReceipt = async () => {
+        if (!member) return;
+        try {
+            const token = localStorage.getItem('token');
+            const response = await api.get(`/members/${member.id}/receipt`, {
+                headers: { Authorization: `Bearer ${token}` },
+                responseType: 'blob' // Critical for handling binary files
+            });
+
+            // Create a temporary URL to trigger the browser download
+            const url = window.URL.createObjectURL(new Blob([response.data]));
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', `PS_Fitness_Receipt.pdf`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+
+        } catch (error) {
+            console.error("Failed to download receipt", error);
+            alert('Could not download receipt.');
         }
     };
 
@@ -170,6 +230,12 @@ const Dashboard = () => {
                         className="flex-1 bg-red-600 hover:bg-red-700 text-white font-semibold py-3 px-4 rounded-xl transition-all duration-150 active:scale-[0.98] cursor-pointer shadow-lg shadow-red-900/30"
                     >
                         Renew Membership
+                    </button>
+                    <button
+                        onClick={handleDownloadReceipt}
+                        className="bg-gray-800 hover:bg-gray-700 text-gray-300 font-semibold py-3 px-5 rounded-xl border border-gray-700 transition-all duration-150 active:scale-[0.98] cursor-pointer"
+                    >
+                        Download Receipt
                     </button>
                     <button
                         onClick={handleLogout}
